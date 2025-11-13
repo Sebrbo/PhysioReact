@@ -1,10 +1,12 @@
-const CACHE_NAME = 'proprio-cog-trainer-v1';
+const CACHE_NAME = 'physioreact-v2'; // change le nom pour forcer la mise à jour
 const FILES_TO_CACHE = [
   './',
   './index.html',
-  './style.css',
-  './app.js',
-  './manifest.webmanifest'
+  './css/style.css',
+  './js/app.js',
+  './manifest.webmanifest',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
