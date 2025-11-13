@@ -316,6 +316,26 @@ function exitFullscreenView() {
   }
 }
 
+// ===== Validation of settings before running =====
+function validateSettings() {
+  // On suppose que updateSettingsFromUI() vient d'être appelé
+
+  // 1) Si mode combiné activé mais aucun sous-mode choisi → erreur
+  if (
+    settings.stimuli.combinedMode.enabled &&
+    !settings.stimuli.combinedMode.coloredArrowsOnly &&
+    !settings.stimuli.combinedMode.backgroundCue
+  ) {
+    alert(
+      'Combined mode is enabled.\n\nPlease select at least one option:\n' +
+      '- "Use only arrows with random colors"\n' +
+      '- or "Use background color as Go / No-Go cue".'
+    );
+    return false;
+  }
+
+  return true;
+}
 // ===== Session control =====
 function setStatus(text) {
   if (statusEl) {
@@ -394,6 +414,12 @@ function endRepetition() {
 
 function startSession() {
   updateSettingsFromUI();
+
+  // 🔎 Nouvelle validation
+  if (!validateSettings()) {
+    return; // on ne démarre pas la session
+  }
+
   if (sessionState.phase !== 'idle') return;
 
   sessionState.repIndex = 0;
@@ -403,7 +429,7 @@ function startSession() {
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
 
-enterFullscreenView();
+  enterFullscreenView();
   startWorkPhase();
 }
 
