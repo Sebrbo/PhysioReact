@@ -47,7 +47,8 @@ let sessionState = {
   workEndTime: null,
   restEndTime: null,
   stimulusTimer: null,
-  gapTimer: null
+  gapTimer: null,
+  countdownTimer: null
 };
 
 // ===== DOM references =====
@@ -66,6 +67,10 @@ const statusEl = document.getElementById('session-status');
 const startBtn = document.getElementById('btn-start');
 const stopBtn = document.getElementById('btn-stop');
 const floatingStopBtn = document.getElementById('floating-stop-btn');
+
+// Countdown overlay
+const countdownOverlay = document.getElementById('countdown-overlay');
+const countdownText = document.getElementById('countdown-text');
 
 // Stimuli checkboxes
 const colorCheckboxes = document.querySelectorAll('.color-checkbox');
@@ -106,7 +111,6 @@ tabButtons.forEach(btn => {
   });
 });
 
-// ===== Settings binding =====
 // ===== Settings binding + combined-mode behaviour =====
 function updateSettingsFromUI() {
   // Combined mode
@@ -136,13 +140,10 @@ function updateSettingsFromUI() {
   }
 }
 
-// --- Comportement spécifique du mode combiné ---
-
 // Quand on active combined mode → random colors activé par défaut
 if (checkCombinedEnabled) {
   checkCombinedEnabled.addEventListener('change', () => {
     if (checkCombinedEnabled.checked) {
-      // Si aucun sous-mode n'est encore sélectionné → on active random colors
       if (!checkColoredArrowsOnly.checked && !checkBackgroundCue.checked) {
         checkColoredArrowsOnly.checked = true;
         checkBackgroundCue.checked = false;
@@ -178,6 +179,25 @@ document.addEventListener('change', event => {
   }
 });
 
+// ===== Validation of settings before running =====
+function validateSettings() {
+  // Mode combiné : au moins un des deux sous-modes doit être choisi
+  if (
+    settings.stimuli.combinedMode.enabled &&
+    !settings.stimuli.combinedMode.coloredArrowsOnly &&
+    !settings.stimuli.combinedMode.backgroundCue
+  ) {
+    alert(
+      'Combined mode is enabled.\n\nPlease select at least one option:\n' +
+      '- "Use only arrows with random colors"\n' +
+      '- or "Use background color as Go / No-Go cue".'
+    );
+    return false;
+  }
+
+  return true;
+}
+
 // ===== Helpers to read selected stimuli =====
 function getSelectedColors() {
   return [...colorCheckboxes]
@@ -203,7 +223,7 @@ function getSelectedLetters() {
     .map(cb => cb.dataset.letter);
 }
 
-// Pour le mode combiné : on garde un fallback si rien n'est coché
+// Pour le mode combiné : fallback si rien n'est coché
 function getArrowsForCombined() {
   const ids = getSelectedArrowIds();
   if (!ids.length) return ARROW_LIST.slice();
@@ -266,7 +286,6 @@ function getRandomStimulus() {
   if (letters.length) pool.push('letter');
 
   if (!pool.length) {
-    // rien de sélectionné
     return {
       text: '?',
       textColor: '#ffffff',
@@ -276,14 +295,14 @@ function getRandomStimulus() {
 
   const type = randFrom(pool);
 
- if (type === 'color') {
-  const color = randFrom(colors);
-  return {
-    text: '',                // pas de texte, uniquement la couleur
-    textColor: '#ffffff',    // sans importance ici
-    backgroundColor: color   // plein écran de cette couleur
-  };
- }
+  if (type === 'color') {
+    const color = randFrom(colors);
+    return {
+      text: '',
+      textColor: '#ffffff',
+      backgroundColor: color
+    };
+  }
 
   if (type === 'arrow') {
     const arrows = ARROW_LIST.filter(a => arrowIds.includes(a.id));
@@ -334,7 +353,6 @@ function enterFullscreenView() {
     floatingStopBtn.classList.remove('hidden');
   }
 
-  // Demande de vrai plein écran navigateur (optionnel, selon navigateur)
   if (document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen().catch(() => {});
   }
@@ -352,26 +370,38 @@ function exitFullscreenView() {
   }
 }
 
-// ===== Validation of settings before running =====
-function validateSettings() {
-  // On suppose que updateSettingsFromUI() vient d'être appelé
+// ===== Countdown helpers =====
+function hideCountdown() {
+  if (countdownOverlay) countdownOverlay.classList.add('hidden');
+  if (countdownText) countdownText.textContent = '';
+}
 
-  // 1) Si mode combiné activé mais aucun sous-mode choisi → erreur
-  if (
-    settings.stimuli.combinedMode.enabled &&
-    !settings.stimuli.combinedMode.coloredArrowsOnly &&
-    !settings.stimuli.combinedMode.backgroundCue
-  ) {
-    alert(
-      'Combined mode is enabled.\n\nPlease select at least one option:\n' +
-      '- "Use only arrows with random colors"\n' +
-      '- or "Use background color as Go / No-Go cue".'
-    );
-    return false;
+function startCountdown(callback) {
+  if (!countdownOverlay || !countdownText) {
+    callback && callback();
+    return;
   }
 
-  return true;
+  const sequence = ['4', '3', '2', '1', 'Go'];
+  let index = 0;
+
+  countdownOverlay.classList.remove('hidden');
+  countdownText.textContent = sequence[index];
+
+  const tick = () => {
+    index++;
+    if (index < sequence.length) {
+      countdownText.textContent = sequence[index];
+      sessionState.countdownTimer = setTimeout(tick, 1000);
+    } else {
+      hideCountdown();
+      callback && callback();
+    }
+  };
+
+  sessionState.countdownTimer = setTimeout(tick, 1000);
 }
+
 // ===== Session control =====
 function setStatus(text) {
   if (statusEl) {
@@ -382,8 +412,10 @@ function setStatus(text) {
 function stopAllTimers() {
   clearTimeout(sessionState.stimulusTimer);
   clearTimeout(sessionState.gapTimer);
+  clearTimeout(sessionState.countdownTimer);
   sessionState.stimulusTimer = null;
   sessionState.gapTimer = null;
+  sessionState.countdownTimer = null;
 }
 
 function scheduleNextStimulus() {
@@ -391,7 +423,6 @@ function scheduleNextStimulus() {
 
   const now = Date.now();
   if (now >= sessionState.workEndTime) {
-    // Fin de la phase de travail
     startRestPhase();
     return;
   }
@@ -451,9 +482,8 @@ function endRepetition() {
 function startSession() {
   updateSettingsFromUI();
 
-  // 🔎 Nouvelle validation
   if (!validateSettings()) {
-    return; // on ne démarre pas la session
+    return;
   }
 
   if (sessionState.phase !== 'idle') return;
@@ -461,24 +491,28 @@ function startSession() {
   sessionState.repIndex = 0;
   stopAllTimers();
   clearStimulus();
+  hideCountdown();
   sessionState.phase = 'work';
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
 
   enterFullscreenView();
-  startWorkPhase();
+
+  // 🔥 Compte à rebours avant le début réel de la phase de travail
+  startCountdown(startWorkPhase);
 }
 
 function stopSession() {
   stopAllTimers();
   clearStimulus();
+  hideCountdown();
   sessionState.phase = 'idle';
   sessionState.repIndex = 0;
   setStatus('idle');
   if (startBtn) startBtn.disabled = false;
   if (stopBtn) stopBtn.disabled = true;
 
- exitFullscreenView(); 
+  exitFullscreenView();
 }
 
 // Buttons
