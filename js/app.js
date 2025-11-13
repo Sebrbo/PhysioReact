@@ -107,6 +107,7 @@ tabButtons.forEach(btn => {
 });
 
 // ===== Settings binding =====
+// ===== Settings binding + combined-mode behaviour =====
 function updateSettingsFromUI() {
   // Combined mode
   settings.stimuli.combinedMode.enabled = checkCombinedEnabled.checked;
@@ -135,7 +136,42 @@ function updateSettingsFromUI() {
   }
 }
 
-// Mise à jour à chaque changement dans le main
+// --- Comportement spécifique du mode combiné ---
+
+// Quand on active combined mode → random colors activé par défaut
+if (checkCombinedEnabled) {
+  checkCombinedEnabled.addEventListener('change', () => {
+    if (checkCombinedEnabled.checked) {
+      // Si aucun sous-mode n'est encore sélectionné → on active random colors
+      if (!checkColoredArrowsOnly.checked && !checkBackgroundCue.checked) {
+        checkColoredArrowsOnly.checked = true;
+        checkBackgroundCue.checked = false;
+      }
+    }
+    updateSettingsFromUI();
+  });
+}
+
+// Random colors et Go/No-Go sont exclusifs
+if (checkColoredArrowsOnly) {
+  checkColoredArrowsOnly.addEventListener('change', () => {
+    if (checkColoredArrowsOnly.checked) {
+      checkBackgroundCue.checked = false;
+    }
+    updateSettingsFromUI();
+  });
+}
+
+if (checkBackgroundCue) {
+  checkBackgroundCue.addEventListener('change', () => {
+    if (checkBackgroundCue.checked) {
+      checkColoredArrowsOnly.checked = false;
+    }
+    updateSettingsFromUI();
+  });
+}
+
+// Mise à jour générale dès qu'un champ change
 document.addEventListener('change', event => {
   if (event.target.closest('main')) {
     updateSettingsFromUI();
