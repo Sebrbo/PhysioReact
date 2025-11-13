@@ -200,3 +200,19 @@ body.running #stimulus-content {
 body.running #floating-stop-btn {
   display: inline-block;
 }
+
+/* Overlay de compte à rebours */
+#countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 950;
+}
+
+#countdown-text {
+  font-size: min(35vw, 35vh);
+  font-weight: 800;
+}
