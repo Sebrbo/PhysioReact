@@ -65,6 +65,7 @@ const stimulusContent = document.getElementById('stimulus-content');
 const statusEl = document.getElementById('session-status');
 const startBtn = document.getElementById('btn-start');
 const stopBtn = document.getElementById('btn-stop');
+const floatingStopBtn = document.getElementById('floating-stop-btn');
 
 // Stimuli checkboxes
 const colorCheckboxes = document.querySelectorAll('.color-checkbox');
