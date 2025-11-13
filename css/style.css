@@ -145,3 +145,58 @@ button:disabled {
 .combined-options.hidden {
   display: none;
 }
+
+/* Bouton stop flottant pour le mode plein écran */
+.floating-stop {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  background: #ff3b30;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none;
+}
+
+/* -------- Mode plein écran lors de la session -------- */
+
+/* On cache la barre du haut et les réglages quand l'exercice tourne */
+body.running .top-bar,
+body.running main > section.screen {
+  display: none;
+}
+
+/* Le stimulus area prend tout l'écran */
+body.running #stimulus-area {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 900;
+  background: #000;
+}
+
+/* Le box prend tout l'espace */
+body.running #stimulus-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+}
+
+/* Stimulus bien énorme en plein écran */
+body.running #stimulus-content {
+  font-size: min(30vw, 30vh);
+}
+
+/* Bouton stop visible en mode running */
+body.running #floating-stop-btn {
+  display: inline-block;
+}
