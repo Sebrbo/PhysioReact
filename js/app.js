@@ -1,10 +1,6 @@
 // ===== Settings model =====
 const settings = {
   stimuli: {
-    colors: true,
-    arrows: true,
-    numbers: false,
-    letters: false,
     combinedMode: {
       enabled: false,
       coloredArrowsOnly: false,
@@ -46,7 +42,7 @@ const LETTER_LIST = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 
 
 // ===== Session state =====
 let sessionState = {
-  phase: 'idle',
+  phase: 'idle',           // 'idle' | 'work' | 'rest'
   repIndex: 0,
   workEndTime: null,
   restEndTime: null,
@@ -70,12 +66,13 @@ const statusEl = document.getElementById('session-status');
 const startBtn = document.getElementById('btn-start');
 const stopBtn = document.getElementById('btn-stop');
 
-// Stimuli controls
-const checkColors = document.getElementById('check-colors');
-const checkArrows = document.getElementById('check-arrows');
-const checkNumbers = document.getElementById('check-numbers');
-const checkLetters = document.getElementById('check-letters');
+// Stimuli checkboxes
+const colorCheckboxes = document.querySelectorAll('.color-checkbox');
+const arrowCheckboxes = document.querySelectorAll('.arrow-checkbox');
+const numberCheckboxes = document.querySelectorAll('.number-checkbox');
+const letterCheckboxes = document.querySelectorAll('.letter-checkbox');
 
+// Combined mode controls
 const checkCombinedEnabled = document.getElementById('check-combined-enabled');
 const combinedOptions = document.getElementById('combined-options');
 const checkColoredArrowsOnly = document.getElementById('check-colored-arrows-only');
@@ -110,12 +107,7 @@ tabButtons.forEach(btn => {
 
 // ===== Settings binding =====
 function updateSettingsFromUI() {
-  // Stimuli
-  settings.stimuli.colors = checkColors.checked;
-  settings.stimuli.arrows = checkArrows.checked;
-  settings.stimuli.numbers = checkNumbers.checked;
-  settings.stimuli.letters = checkLetters.checked;
-
+  // Combined mode
   settings.stimuli.combinedMode.enabled = checkCombinedEnabled.checked;
   settings.stimuli.combinedMode.coloredArrowsOnly = checkColoredArrowsOnly.checked;
   settings.stimuli.combinedMode.backgroundCue = checkBackgroundCue.checked;
@@ -123,8 +115,8 @@ function updateSettingsFromUI() {
   settings.stimuli.combinedMode.noGoColor = inputNoGoColor.value;
 
   // Display
-  const mode = document.querySelector('input[name="display-mode"]:checked').value;
-  settings.display.mode = mode;
+  const modeEl = document.querySelector('input[name="display-mode"]:checked');
+  settings.display.mode = modeEl ? modeEl.value : 'fixed';
   settings.display.durationMs = parseInt(fixedDurationInput.value, 10) || 1000;
   settings.display.randomMinMs = parseInt(randomMinInput.value, 10) || 500;
   settings.display.randomMaxMs = parseInt(randomMaxInput.value, 10) || 1500;
@@ -135,15 +127,51 @@ function updateSettingsFromUI() {
   settings.session.restDurationSec = parseInt(restInput.value, 10) || 0;
   settings.session.autoRestart = autoRestartCheck.checked;
   settings.session.repetitions = parseInt(repetitionsInput.value, 10) || 1;
+
+  // UI for combined options
+  combinedOptions.classList.toggle('hidden', !checkCombinedEnabled.checked);
 }
 
-// Mettre à jour dès qu'un champ change
+// Mise à jour à chaque changement dans le main
 document.addEventListener('change', event => {
   if (event.target.closest('main')) {
     updateSettingsFromUI();
-    combinedOptions.classList.toggle('hidden', !checkCombinedEnabled.checked);
   }
 });
+
+// ===== Helpers to read active stimuli =====
+function getActiveColors() {
+  const list = [...colorCheckboxes]
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.color);
+  return list.length > 0 ? list : COLOR_LIST.slice();
+}
+
+function getActiveArrows() {
+  const activeIds = [...arrowCheckboxes]
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.arrow);
+
+  if (activeIds.length === 0) {
+    return ARROW_LIST.slice();
+  }
+
+  return ARROW_LIST.filter(a => activeIds.includes(a.id));
+}
+
+function getActiveNumbers() {
+  const list = [...numberCheckboxes]
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.number);
+  return list;
+}
+
+function getActiveLetters() {
+  const list = [...letterCheckboxes]
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.letter);
+  return list;
+}
 
 // ===== Stimulus generation =====
 function randFrom(array) {
@@ -166,15 +194,16 @@ function getGoNoGoBackground() {
 }
 
 function getRandomStimulus() {
-  // Combined mode active ?
+  // Combined mode
   if (settings.stimuli.combinedMode.enabled) {
-    // Only arrows, with optional color
-    const arrow = randFrom(ARROW_LIST);
+    const arrows = getActiveArrows();
+    const colors = getActiveColors();
+    const arrow = randFrom(arrows);
     const color = settings.stimuli.combinedMode.coloredArrowsOnly
-      ? randFrom(COLOR_LIST)
+      ? randFrom(colors)
       : '#ffffff';
-
     const bg = getGoNoGoBackground();
+
     return {
       text: arrow.char,
       textColor: color,
@@ -182,14 +211,20 @@ function getRandomStimulus() {
     };
   }
 
-  // Mode standard : mélange selon cases cochées
+  // Standard mode: pool based on what is actually selected
+  const colors = getActiveColors().length > 0 ? getActiveColors() : [];
+  const arrows = getActiveArrows().length > 0 ? getActiveArrows() : [];
+  const numbers = getActiveNumbers();
+  const letters = getActiveLetters();
+
   const pool = [];
-  if (settings.stimuli.colors) pool.push('color');
-  if (settings.stimuli.arrows) pool.push('arrow');
-  if (settings.stimuli.numbers) pool.push('number');
-  if (settings.stimuli.letters) pool.push('letter');
+  if (colors.length > 0) pool.push('color');
+  if (arrows.length > 0) pool.push('arrow');
+  if (numbers.length > 0) pool.push('number');
+  if (letters.length > 0) pool.push('letter');
 
   if (pool.length === 0) {
+    // Rien de sélectionné -> point d'interrogation
     return {
       text: '?',
       textColor: '#ffffff',
@@ -200,7 +235,8 @@ function getRandomStimulus() {
   const type = randFrom(pool);
 
   if (type === 'color') {
-    const color = randFrom(COLOR_LIST);
+    const cList = getActiveColors();
+    const color = randFrom(cList);
     return {
       text: color.toUpperCase(),
       textColor: color,
@@ -209,7 +245,8 @@ function getRandomStimulus() {
   }
 
   if (type === 'arrow') {
-    const arrow = randFrom(ARROW_LIST);
+    const aList = getActiveArrows();
+    const arrow = randFrom(aList);
     return {
       text: arrow.char,
       textColor: '#ffffff',
@@ -218,7 +255,8 @@ function getRandomStimulus() {
   }
 
   if (type === 'number') {
-    const n = randFrom(NUMBER_LIST);
+    const nList = getActiveNumbers();
+    const n = randFrom(nList);
     return {
       text: n,
       textColor: '#ffffff',
@@ -227,7 +265,8 @@ function getRandomStimulus() {
   }
 
   if (type === 'letter') {
-    const l = randFrom(LETTER_LIST);
+    const lList = getActiveLetters();
+    const l = randFrom(lList);
     return {
       text: l,
       textColor: '#ffffff',
@@ -273,11 +312,9 @@ function scheduleNextStimulus() {
   const displayDuration = getDisplayDuration();
   showStimulus();
 
-  // fin de l'affichage
   sessionState.stimulusTimer = setTimeout(() => {
     clearStimulus();
 
-    // délai entre deux stimuli
     sessionState.gapTimer = setTimeout(() => {
       scheduleNextStimulus();
     }, settings.display.interStimulusDelayMs);
@@ -298,7 +335,6 @@ function startRestPhase() {
   clearStimulus();
 
   if (settings.session.restDurationSec <= 0) {
-    // Pas de repos : enchaîne
     endRepetition();
     return;
   }
@@ -308,7 +344,6 @@ function startRestPhase() {
   sessionState.restEndTime = now + settings.session.restDurationSec * 1000;
   setStatus(`rest (rep ${sessionState.repIndex + 1}/${settings.session.repetitions})`);
 
-  // Juste un timeout pour la fin du repos
   const restMs = settings.session.restDurationSec * 1000;
   sessionState.stimulusTimer = setTimeout(() => {
     endRepetition();
@@ -319,12 +354,10 @@ function endRepetition() {
   sessionState.repIndex++;
 
   if (!settings.session.autoRestart || sessionState.repIndex >= settings.session.repetitions) {
-    // Fin de la session
     stopSession();
     return;
   }
 
-  // Relancer une nouvelle répétition
   startWorkPhase();
 }
 
@@ -334,6 +367,7 @@ function startSession() {
 
   sessionState.repIndex = 0;
   stopAllTimers();
+  clearStimulus();
   sessionState.phase = 'work';
   startBtn.disabled = true;
   stopBtn.disabled = false;
