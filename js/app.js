@@ -240,14 +240,14 @@ function getRandomStimulus() {
 
   const type = randFrom(pool);
 
-  if (type === 'color') {
-    const color = randFrom(colors);
-    return {
-      text: color.toUpperCase(),
-      textColor: color,
-      backgroundColor: '#000000'
-    };
-  }
+ if (type === 'color') {
+  const color = randFrom(colors);
+  return {
+    text: '',                // pas de texte, uniquement la couleur
+    textColor: '#ffffff',    // sans importance ici
+    backgroundColor: color   // plein écran de cette couleur
+  };
+ }
 
   if (type === 'arrow') {
     const arrows = ARROW_LIST.filter(a => arrowIds.includes(a.id));
