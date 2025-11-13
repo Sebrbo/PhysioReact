@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proprio & Cognitive Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top-bar">
+    <h1>Proprio & Cognitive Trainer</h1>
+    <nav class="nav-tabs">
+      <button data-screen="stimuli" class="tab-button active">Stimuli</button>
+      <button data-screen="timing" class="tab-button">Display timing</button>
+      <button data-screen="session" class="tab-button">Session</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Screen 1: Stimuli selection -->
+    <section id="screen-stimuli" class="screen active">
+      <h2>Stimuli selection</h2>
+      <div class="card">
+        <h3>Stimuli types</h3>
+        <label><input type="checkbox" id="check-colors" checked> Colors</label>
+        <label><input type="checkbox" id="check-arrows" checked> Arrows</label>
+        <label><input type="checkbox" id="check-numbers"> Numbers (1–12)</label>
+        <label><input type="checkbox" id="check-letters"> Letters (A–Z)</label>
+      </div>
+
+      <div class="card">
+        <h3>Combined mode</h3>
+        <label>
+          <input type="checkbox" id="check-combined-enabled">
+          Enable combined mode (overrides standard stimuli)
+        </label>
+
+        <div id="combined-options" class="combined-options hidden">
+          <label>
+            <input type="checkbox" id="check-colored-arrows-only">
+            Use only arrows with random colors
+          </label>
+
+          <label>
+            <input type="checkbox" id="check-background-cue">
+            Use background color as Go / No-Go cue
+          </label>
+
+          <div class="inline-group">
+            <label>Go color:
+              <input type="color" id="input-go-color" value="#00aa00">
+            </label>
+            <label>No-Go color:
+              <input type="color" id="input-nogo-color" value="#ff8800">
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: Display timing -->
+    <section id="screen-timing" class="screen">
+      <h2>Display timing</h2>
+      <div class="card">
+        <h3>Display duration</h3>
+
+        <label>
+          <input type="radio" name="display-mode" value="fixed" checked>
+          Fixed duration
+        </label>
+        <div class="inline-group">
+          <label>Duration (ms):
+            <input type="number" id="input-fixed-duration" value="1000" min="100" step="50">
+          </label>
+        </div>
+
+        <label>
+          <input type="radio" name="display-mode" value="random">
+          Random duration between
+        </label>
+        <div class="inline-group">
+          <label>Min (ms):
+            <input type="number" id="input-random-min" value="500" min="50" step="50">
+          </label>
+          <label>Max (ms):
+            <input type="number" id="input-random-max" value="1500" min="100" step="50">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Inter-stimulus delay</h3>
+        <label>Delay between stimuli (ms):
+          <input type="number" id="input-delay" value="500" min="0" step="50">
+        </label>
+      </div>
+    </section>
+
+    <!-- Screen 3: Session settings + Start -->
+    <section id="screen-session" class="screen">
+      <h2>Session</h2>
+      <div class="card">
+        <h3>Work / rest</h3>
+        <div class="inline-group">
+          <label>Work duration (sec):
+            <input type="number" id="input-work-sec" value="30" min="1" step="1">
+          </label>
+          <label>Rest duration (sec):
+            <input type="number" id="input-rest-sec" value="15" min="0" step="1">
+          </label>
+        </div>
+
+        <label>
+          <input type="checkbox" id="check-auto-restart" checked>
+          Auto restart with repetitions
+        </label>
+
+        <div class="inline-group">
+          <label>Repetitions:
+            <input type="number" id="input-repetitions" value="3" min="1" step="1">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Control</h3>
+        <button id="btn-start" class="primary">Start session</button>
+        <button id="btn-stop" class="secondary" disabled>Stop</button>
+        <p id="session-status">Status: idle</p>
+      </div>
+    </section>
+
+    <!-- Stimulus display area - always visible -->
+    <section id="stimulus-area">
+      <div id="stimulus-box">
+        <span id="stimulus-content"></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
