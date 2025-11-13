@@ -290,6 +290,32 @@ function clearStimulus() {
   stimulusBox.style.backgroundColor = '#000000';
 }
 
+// ===== Fullscreen view helpers =====
+function enterFullscreenView() {
+  document.body.classList.add('running');
+
+  if (floatingStopBtn) {
+    floatingStopBtn.classList.remove('hidden');
+  }
+
+  // Demande de vrai plein écran navigateur (optionnel, selon navigateur)
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+function exitFullscreenView() {
+  document.body.classList.remove('running');
+
+  if (floatingStopBtn) {
+    floatingStopBtn.classList.add('hidden');
+  }
+
+  if (document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
 // ===== Session control =====
 function setStatus(text) {
   if (statusEl) {
@@ -377,6 +403,7 @@ function startSession() {
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
 
+enterFullscreenView();
   startWorkPhase();
 }
 
@@ -388,11 +415,14 @@ function stopSession() {
   setStatus('idle');
   if (startBtn) startBtn.disabled = false;
   if (stopBtn) stopBtn.disabled = true;
+
+ exitFullscreenView(); 
 }
 
 // Buttons
 if (startBtn) startBtn.addEventListener('click', startSession);
 if (stopBtn) stopBtn.addEventListener('click', stopSession);
+if (floatingStopBtn) floatingStopBtn.addEventListener('click', stopSession);
 
 // Init
 updateSettingsFromUI();
