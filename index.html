@@ -21,19 +21,93 @@
     <!-- Screen 1: Stimuli selection -->
     <section id="screen-stimuli" class="screen active">
       <h2>Stimuli selection</h2>
+
       <div class="card">
-        <h3>Stimuli types</h3>
-        <label><input type="checkbox" id="check-colors" checked> Colors</label>
-        <label><input type="checkbox" id="check-arrows" checked> Arrows</label>
-        <label><input type="checkbox" id="check-numbers"> Numbers (1–12)</label>
-        <label><input type="checkbox" id="check-letters"> Letters (A–Z)</label>
+        <h3>Colors</h3>
+        <div class="inline-group">
+          <label><input type="checkbox" class="color-checkbox" data-color="red" checked> Red</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="blue" checked> Blue</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="green" checked> Green</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="yellow"> Yellow</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="purple"> Purple</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="orange"> Orange</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="black"> Black</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="gray"> Gray</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Arrows</h3>
+        <div class="inline-group">
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up" checked> ↑</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down" checked> ↓</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="left"> ←</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="right"> →</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up-right"> ↗</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down-right"> ↘</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up-left"> ↖</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down-left"> ↙</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Numbers (1–12)</h3>
+        <div class="inline-group">
+          <!-- 1 à 12 -->
+          <label><input type="checkbox" class="number-checkbox" data-number="1"> 1</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="2"> 2</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="3"> 3</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="4"> 4</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="5"> 5</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="6"> 6</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="7"> 7</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="8"> 8</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="9"> 9</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="10"> 10</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="11"> 11</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="12"> 12</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Letters (A–Z)</h3>
+        <div class="inline-group">
+          <!-- A à Z -->
+          <!-- Tu peux en décocher plein par défaut si c'est trop chargé -->
+          <label><input type="checkbox" class="letter-checkbox" data-letter="A"> A</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="B"> B</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="C"> C</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="D"> D</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="E"> E</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="F"> F</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="G"> G</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="H"> H</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="I"> I</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="J"> J</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="K"> K</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="L"> L</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="M"> M</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="N"> N</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="O"> O</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="P"> P</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Q"> Q</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="R"> R</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="S"> S</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="T"> T</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="U"> U</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="V"> V</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="W"> W</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="X"> X</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Y"> Y</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Z"> Z</label>
+        </div>
       </div>
 
       <div class="card">
         <h3>Combined mode</h3>
         <label>
           <input type="checkbox" id="check-combined-enabled">
-          Enable combined mode (overrides standard stimuli)
+          Enable combined mode (uses your selected colors and arrows)
         </label>
 
         <div id="combined-options" class="combined-options hidden">
@@ -131,7 +205,7 @@
       </div>
     </section>
 
-    <!-- Stimulus display area - always visible -->
+    <!-- Stimulus display area -->
     <section id="stimulus-area">
       <div id="stimulus-box">
         <span id="stimulus-content"></span>
@@ -139,6 +213,7 @@
     </section>
   </main>
 
+  <!-- Important: script à la fin du body -->
   <script src="app.js"></script>
 </body>
 </html>
