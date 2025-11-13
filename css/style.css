@@ -211,7 +211,9 @@ body.running #floating-stop-btn {
   background: rgba(0, 0, 0, 0.9);
   z-index: 950;
 }
-
+#countdown-overlay.hidden {
+  display: none;
+}
 #countdown-text {
   font-size: min(35vw, 35vh);
   font-weight: 800;
