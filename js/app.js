@@ -49,8 +49,41 @@ let sessionState = {
   stimulusTimer: null,
   gapTimer: null,
   countdownTimer: null,
-  consecutiveNoGo: 0       // 🔹 compteur de No-Go d'affilée
+  consecutiveNoGo: 0       // nombre de No-Go d'affilée (pour limiter à 2)
 };
+
+// ===== Audio (beeps) =====
+let audioCtx = null;
+
+function ensureAudioContext() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      audioCtx = new AC();
+    }
+  }
+}
+
+function playBeep(frequency = 880, durationMs = 150) {
+  ensureAudioContext();
+  if (!audioCtx) return;
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.frequency.value = frequency;
+  osc.type = 'sine';
+
+  gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.4, audioCtx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + durationMs / 1000);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + durationMs / 1000 + 0.05);
+}
 
 // ===== DOM references =====
 const screens = {
@@ -141,7 +174,7 @@ function updateSettingsFromUI() {
   }
 }
 
-// Quand on active combined mode → random colors activé par défaut
+// Quand on active combined mode → random colors activé par défaut si rien d'autre
 if (checkCombinedEnabled) {
   checkCombinedEnabled.addEventListener('change', () => {
     if (checkCombinedEnabled.checked) {
@@ -259,7 +292,6 @@ function getGoNoGoBackground() {
   if (sessionState.consecutiveNoGo >= 2) {
     isGo = true;
   } else {
-    // Sinon tirage aléatoire classique 50 / 50
     isGo = Math.random() < 0.5;
   }
 
@@ -272,21 +304,22 @@ function getGoNoGoBackground() {
   }
 }
 
-  // ===== Combined mode =====
 function getRandomStimulus() {
-
+  // ===== Combined mode =====
   if (settings.stimuli.combinedMode.enabled) {
     const arrows = getArrowsForCombined();
     const colors = getColorsForCombined();
     const arrow = randFrom(arrows);
+
     const color = settings.stimuli.combinedMode.coloredArrowsOnly
       ? randFrom(colors)
       : '#ffffff';
+
     const bg = getGoNoGoBackground();
 
     return {
       text: arrow.char,
-      textColor: color,
+      textColor: settings.stimuli.combinedMode.coloredArrowsOnly ? color : '#ffffff',
       backgroundColor: bg || '#000000'
     };
   }
@@ -406,10 +439,22 @@ function startCountdown(callback) {
   countdownOverlay.classList.remove('hidden');
   countdownText.textContent = sequence[index];
 
+  // Bip initial
+  playBeep(600, 120);
+
   const tick = () => {
     index++;
     if (index < sequence.length) {
       countdownText.textContent = sequence[index];
+
+      if (sequence[index] === 'Go') {
+        // Bip plus aigu pour "Go"
+        playBeep(1000, 150);
+      } else {
+        // Bip normal
+        playBeep(600, 120);
+      }
+
       sessionState.countdownTimer = setTimeout(tick, 1000);
     } else {
       hideCountdown();
@@ -494,7 +539,11 @@ function endRepetition() {
     return;
   }
 
-  startWorkPhase();
+  // Nouvelle phase de travail : on remet le compteur de No-Go à zéro
+  sessionState.consecutiveNoGo = 0;
+
+  // Compte à rebours à chaque nouvelle répétition
+  startCountdown(startWorkPhase);
 }
 
 function startSession() {
@@ -511,13 +560,14 @@ function startSession() {
   clearStimulus();
   hideCountdown();
   sessionState.phase = 'work';
-  sessionState.consecutiveNoGo = 0;  // reset compteur
+  sessionState.consecutiveNoGo = 0;
+
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
 
   enterFullscreenView();
 
-  // 🔥 Compte à rebours avant le début réel de la phase de travail
+  // Compte à rebours avant la première phase de travail
   startCountdown(startWorkPhase);
 }
 
@@ -527,7 +577,7 @@ function stopSession() {
   hideCountdown();
   sessionState.phase = 'idle';
   sessionState.repIndex = 0;
-  sessionState.consecutiveNoGo = 0;   // reset
+  sessionState.consecutiveNoGo = 0;
   setStatus('idle');
   if (startBtn) startBtn.disabled = false;
   if (stopBtn) stopBtn.disabled = true;
@@ -536,13 +586,17 @@ function stopSession() {
 }
 
 // Buttons
-if (startBtn) startBtn.addEventListener('click', startSession);
+if (startBtn) startBtn.addEventListener('click', () => {
+  ensureAudioContext();   // prépare l'audio dès le clic utilisateur
+  startSession();
+});
 if (stopBtn) stopBtn.addEventListener('click', stopSession);
 if (floatingStopBtn) floatingStopBtn.addEventListener('click', stopSession);
 
 // Init
 updateSettingsFromUI();
 setStatus('idle');
+hideCountdown();
 
 // ===== Service worker registration =====
 if ('serviceWorker' in navigator) {
