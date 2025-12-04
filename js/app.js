@@ -48,7 +48,8 @@ let sessionState = {
   restEndTime: null,
   stimulusTimer: null,
   gapTimer: null,
-  countdownTimer: null
+  countdownTimer: null,
+  consecutiveNoGo: 0       // 🔹 compteur de No-Go d'affilée
 };
 
 // ===== DOM references =====
@@ -251,12 +252,29 @@ function getDisplayDuration() {
 
 function getGoNoGoBackground() {
   if (!settings.stimuli.combinedMode.backgroundCue) return null;
-  const isGo = Math.random() < 0.5;
-  return isGo ? settings.stimuli.combinedMode.goColor : settings.stimuli.combinedMode.noGoColor;
+
+  let isGo;
+
+  // Si déjà 2 No-Go d'affilée → on force un Go
+  if (sessionState.consecutiveNoGo >= 2) {
+    isGo = true;
+  } else {
+    // Sinon tirage aléatoire classique 50 / 50
+    isGo = Math.random() < 0.5;
+  }
+
+  if (isGo) {
+    sessionState.consecutiveNoGo = 0;
+    return settings.stimuli.combinedMode.goColor;
+  } else {
+    sessionState.consecutiveNoGo += 1;
+    return settings.stimuli.combinedMode.noGoColor;
+  }
 }
 
-function getRandomStimulus() {
   // ===== Combined mode =====
+function getRandomStimulus() {
+
   if (settings.stimuli.combinedMode.enabled) {
     const arrows = getArrowsForCombined();
     const colors = getColorsForCombined();
@@ -493,6 +511,7 @@ function startSession() {
   clearStimulus();
   hideCountdown();
   sessionState.phase = 'work';
+  sessionState.consecutiveNoGo = 0;  // reset compteur
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
 
@@ -508,6 +527,7 @@ function stopSession() {
   hideCountdown();
   sessionState.phase = 'idle';
   sessionState.repIndex = 0;
+  sessionState.consecutiveNoGo = 0;   // reset
   setStatus('idle');
   if (startBtn) startBtn.disabled = false;
   if (stopBtn) stopBtn.disabled = true;
