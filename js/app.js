@@ -19,7 +19,7 @@ const settings = {
   session: {
     workDurationSec: 30,
     restDurationSec: 15,
-    repetitions: 4,
+    repetitions: 3,
     autoRestart: true,
     maxSameInRow: 3
   }
