@@ -1,266 +1,239 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>PhysioReact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PhysioTempo</title>
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="css/style.css" />
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#0b0d12" />
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
-  <main class="container">
-    <header class="topbar">
-      <h1>PhysioTempo</h1>
-      <div class="lang">
-        <label for="langSelect" class="i18n" data-key="language">Langue</label>
-        <select id="langSelect" aria-label="Langue">
-          <option value="en">English</option>
-          <option value="fr" selected>Français</option>
-        </select>
-      </div>
-    </header>
+  <header class="top-bar">
+    <h1>PhysioReact</h1>
+    <nav class="nav-tabs">
+      <button data-screen="stimuli" class="tab-button active">Stimuli</button>
+      <button data-screen="timing" class="tab-button">Display timing</button>
+      <button data-screen="session" class="tab-button">Session</button>
+    </nav>
+  </header>
 
-    <section class="card">
-      <!-- Sélecteur de mode -->
-      <div class="mode-row">
+  <main>
+    <!-- Screen 1: Stimuli selection -->
+    <section id="screen-stimuli" class="screen active">
+      <h2>Stimuli selection</h2>
+
+      <div class="card">
+        <h3>Colors</h3>
+        <div class="inline-group">
+          <label><input type="checkbox" class="color-checkbox" data-color="red" checked> Red</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="blue" checked> Blue</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="green" checked> Green</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="yellow"> Yellow</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="purple"> Purple</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="orange"> Orange</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="black"> Black</label>
+          <label><input type="checkbox" class="color-checkbox" data-color="gray"> Gray</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Arrows</h3>
+        <div class="inline-group">
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up" checked> ↑</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down" checked> ↓</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="left"> ←</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="right"> →</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up-right"> ↗</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down-right"> ↘</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="up-left"> ↖</label>
+          <label><input type="checkbox" class="arrow-checkbox" data-arrow="down-left"> ↙</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Numbers (1–12)</h3>
+        <div class="inline-group">
+          <!-- 1 à 12 -->
+          <label><input type="checkbox" class="number-checkbox" data-number="1"> 1</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="2"> 2</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="3"> 3</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="4"> 4</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="5"> 5</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="6"> 6</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="7"> 7</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="8"> 8</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="9"> 9</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="10"> 10</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="11"> 11</label>
+          <label><input type="checkbox" class="number-checkbox" data-number="12"> 12</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Letters (A–Z)</h3>
+        <div class="inline-group">
+          <!-- A à Z -->
+          <!-- Tu peux en décocher plein par défaut si c'est trop chargé -->
+          <label><input type="checkbox" class="letter-checkbox" data-letter="A"> A</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="B"> B</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="C"> C</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="D"> D</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="E"> E</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="F"> F</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="G"> G</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="H"> H</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="I"> I</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="J"> J</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="K"> K</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="L"> L</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="M"> M</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="N"> N</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="O"> O</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="P"> P</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Q"> Q</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="R"> R</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="S"> S</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="T"> T</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="U"> U</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="V"> V</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="W"> W</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="X"> X</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Y"> Y</label>
+          <label><input type="checkbox" class="letter-checkbox" data-letter="Z"> Z</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Combined mode</h3>
         <label>
-          <span class="i18n" data-key="mode_label">Cadence</span>
-          <select id="mode">
-            <option value="accel"     class="i18n" data-key="mode_accel">Cadence progressive</option>
-            <option value="steady"    class="i18n" data-key="mode_steady">Cadence fixe (durée)</option>
-            <option value="random"    class="i18n" data-key="mode_random">Cadence aléatoire</option>
-            <option value="ecc"       class="i18n" data-key="mode_ecc">Excentrique (séries × reps)</option>
-            <option value="hsr"       class="i18n" data-key="mode_hsr">HSR (séries × reps)</option>
-          </select>
+          <input type="checkbox" id="check-combined-enabled">
+          Enable combined mode (uses your selected colors and arrows)
         </label>
-      </div>
 
-      <!-- Panneaux de paramètres par mode -->
-      <div class="grid">
-        <!-- Cadence progressive -->
-        <fieldset class="mode-panel" data-mode="accel">
-          <legend class="i18n" data-key="mode_accel">Cadence progressive</legend>
-
+        <div id="combined-options" class="combined-options hidden">
           <label>
-            <span class="i18n" data-key="start_bpm_label">Cadence de départ (bpm)</span>
-            <div class="with-unit">
-              <input id="startBpm" type="number" min="20" max="300" step="1" value="40" />
-              <span class="unit">bpm</span>
-            </div>
+            <input type="checkbox" id="check-colored-arrows-only">
+            Use only arrows with random colors
           </label>
 
           <label>
-            <span class="i18n" data-key="end_bpm_label">Cadence d’arrivée (bpm)</span>
-            <div class="with-unit">
-              <input id="endBpm" type="number" min="20" max="300" step="1" value="50" />
-              <span class="unit">bpm</span>
-            </div>
+            <input type="checkbox" id="check-background-cue">
+            Use background color as Go / No-Go cue
           </label>
+    <p style="font-size:0.8rem; opacity:0.75; margin-top:0.25rem;">
+      When combined mode is enabled, at least one of these options must be selected.
+    </p>
 
-          <label>
-            <span class="i18n" data-key="ramp_label">Durée d’accélération (s)</span>
-            <input id="rampSeconds" type="number" min="0" max="3600" step="1" value="120" />
-          </label>
-        </fieldset>
-
-        <!-- Cadence fixe -->
-        <fieldset class="mode-panel hidden" data-mode="steady">
-          <legend class="i18n" data-key="mode_steady">Cadence fixe (durée)</legend>
-
-          <label>
-            <span class="i18n" data-key="steady_bpm_label">Cadence (bpm)</span>
-            <div class="with-unit">
-              <input id="steadyBpm" type="number" min="20" max="300" step="1" value="40" />
-              <span class="unit">bpm</span>
-            </div>
-          </label>
-
-          <label>
-            <span class="i18n" data-key="steady_secs_label">Durée (s)</span>
-            <input id="steadySeconds" type="number" min="1" max="3600" step="1" value="30" />
-          </label>
-        </fieldset>
-
-        <!-- Cadence aléatoire -->
-        <fieldset class="mode-panel hidden" data-mode="random">
-          <legend class="i18n" data-key="mode_random">Cadence aléatoire</legend>
-
-          <label>
-            <span class="i18n" data-key="random_min_bpm_label">Cadence min (bpm)</span>
-            <div class="with-unit">
-              <input id="minBpm" type="number" min="20" max="300" step="1" value="20" />
-              <span class="unit">bpm</span>
-            </div>
-          </label>
-
-          <label>
-            <span class="i18n" data-key="random_max_bpm_label">Cadence max (bpm)</span>
-            <div class="with-unit">
-              <input id="maxBpm" type="number" min="20" max="300" step="1" value="30" />
-              <span class="unit">bpm</span>
-            </div>
-          </label>
-
-          <label>
-            <span class="i18n" data-key="random_secs_label">Durée (s)</span>
-            <input id="randomSeconds" type="number" min="1" max="3600" step="1" value="90" />
-          </label>
-        </fieldset>
-
-        <!-- Excentrique -->
-        <fieldset class="mode-panel hidden" data-mode="ecc">
-          <legend class="i18n" data-key="mode_ecc">Excentrique (séries × reps)</legend>
-
-          <label>
-            <span class="i18n" data-key="ecc_sets_label">Séries</span>
-            <input id="eccSets" type="number" min="1" max="20" step="1" value="3" />
-          </label>
-
-          <label>
-            <span class="i18n" data-key="ecc_reps_label">Répétitions par série</span>
-            <input id="eccReps" type="number" min="1" max="50" step="1" value="15" />
-          </label>
-
-          <label>
-            <span class="i18n" data-key="ecc_work_label">Temps d’effort excentrique (s)</span>
-            <input id="eccWorkSec" type="number" min="1" max="15" step="1" value="6" />
-          </label>
-
-          <label>
-            <span class="i18n" data-key="ecc_return_label">Retour à la position de départ (s)</span>
-            <input id="eccReturnSec" type="number" min="0" max="15" step="1" value="3" />
-          </label>
-        </fieldset>
-
-        <!-- HSR -->
-        <fieldset class="mode-panel hidden" data-mode="hsr">
-          <legend class="i18n" data-key="mode_hsr">HSR (séries × reps)</legend>
-
-          <label>
-            <span class="i18n" data-key="hsr_sets_label">Séries</span>
-            <input id="hsrSets" type="number" min="1" max="20" step="1" value="3">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_reps_label">Répétitions par série</span>
-            <input id="hsrReps" type="number" min="1" max="50" step="1" value="15">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_con_label">Concentrique (s)</span>
-            <input id="hsrConSec" type="number" min="1" max="15" step="1" value="3">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_ecc_label">Excentrique (s)</span>
-            <input id="hsrEccSec" type="number" min="1" max="15" step="1" value="3">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_hold_top_label">Pause en haut (s)</span>
-            <input id="hsrHoldTop" type="number" min="0" max="10" step="1" value="0">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_hold_bottom_label">Pause en bas (s)</span>
-            <input id="hsrHoldBottom" type="number" min="0" max="10" step="1" value="0">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_rep_rest_label">Repos entre répétitions (s)</span>
-            <input id="hsrRepRest" type="number" min="0" max="20" step="1" value="0">
-          </label>
-
-          <label>
-            <span class="i18n" data-key="hsr_rest_label">Repos entre séries (s)</span>
-            <input id="hsrRest" type="number" min="0" max="600" step="5" value="120">
-          </label>
-        </fieldset>
-
-        <!-- Options communes -->
-        <fieldset class="mode-panel common">
-          <legend class="i18n" data-key="start_options">Démarrage & cycles</legend>
-
-          <label class="row">
-            <input id="autoRestart" type="checkbox" />
-            <span class="i18n" data-key="auto_restart_label">Redémarrage automatique</span>
-          </label>
-
-          <label>
-            <span class="i18n" data-key="auto_restart_delay_label">Délai de redémarrage (s)</span>
-            <input id="autoRestartDelay" type="number" min="1" max="3600" step="1" value="5" />
-          </label>
-
-          <label>
-            <span class="i18n" data-key="countdown_sound_label">Signal du compte à rebours</span>
-            <select id="countdownSound">
-              <option value="none"  class="i18n" data-key="cd_none">Muet</option>
-              <option value="beep"  class="i18n" data-key="cd_beep" selected>Bip</option>
-              <option value="voice" class="i18n" data-key="cd_voice">Voix (FR/EN)</option>
-            </select>
-          </label>
-        </fieldset>
-      </div>
-
-      <div class="buttons">
-        <button id="preset" class="ghost">
-          <span class="i18n" data-key="preset">Préréglage 40 → 50 en 120 s</span>
-        </button>
-        <div class="spacer"></div>
-        <button id="startBtn" class="primary">
-          <span class="i18n" data-key="start">Démarrer</span>
-        </button>
-        <button id="stopBtn" class="danger" disabled>
-          <span class="i18n" data-key="stop">Arrêter</span>
-        </button>
-      </div>
-
-      <div class="readout">
-        <div>
-          <small class="muted i18n" data-key="current_bpm">Cadence actuelle (bpm)</small>
-          <div id="bpmNow" class="mono big">—</div>
-        </div>
-        <div>
-          <small class="muted i18n" data-key="status">Statut</small>
-          <div id="status" class="mono">au repos</div>
-        </div>
-        <div>
-          <small class="muted i18n" data-key="time_left">Temps restant</small>
-          <div id="timeLeft" class="mono">—</div>
+          <div class="inline-group">
+            <label>Go color:
+              <input type="color" id="input-go-color" value="#00aa00">
+            </label>
+            <label>No-Go color:
+              <input type="color" id="input-nogo-color" value="#ff8800">
+            </label>
+          </div>
         </div>
       </div>
-
-      <p class="hint" id="hintText"></p>
-      <p id="iosVoiceNote" class="muted" style="display:none">⚠️ La voix du compte à rebours peut ne pas fonctionner sur iOS. Utiliser le mode « Bip ».</p>
     </section>
 
-    <footer class="foot">
-      <span class="muted">&copy; 2025 PhysioTempo</span>
-    </footer>
+    <!-- Screen 2: Display timing -->
+    <section id="screen-timing" class="screen">
+      <h2>Display timing</h2>
+      <div class="card">
+        <h3>Display duration</h3>
+
+        <label>
+          <input type="radio" name="display-mode" value="fixed" checked>
+          Fixed duration
+        </label>
+        <div class="inline-group">
+          <label>Duration (ms):
+            <input type="number" id="input-fixed-duration" value="1000" min="100" step="50">
+          </label>
+        </div>
+
+        <label>
+          <input type="radio" name="display-mode" value="random">
+          Random duration between
+        </label>
+        <div class="inline-group">
+          <label>Min (ms):
+            <input type="number" id="input-random-min" value="500" min="50" step="50">
+          </label>
+          <label>Max (ms):
+            <input type="number" id="input-random-max" value="1500" min="100" step="50">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Inter-stimulus delay</h3>
+        <label>Delay between stimuli (ms):
+          <input type="number" id="input-delay" value="500" min="0" step="50">
+        </label>
+      </div>
+    </section>
+
+    <!-- Screen 3: Session settings + Start -->
+    <section id="screen-session" class="screen">
+      <h2>Session</h2>
+      <div class="card">
+        <h3>Work / rest</h3>
+        <div class="inline-group">
+          <label>Work duration (sec):
+            <input type="number" id="input-work-sec" value="30" min="1" step="1">
+          </label>
+          <label>Rest duration (sec):
+            <input type="number" id="input-rest-sec" value="15" min="0" step="1">
+          </label>
+        </div>
+
+        <label>
+          <input type="checkbox" id="check-auto-restart" checked>
+          Auto restart with repetitions
+        </label>
+
+        <div class="inline-group">
+          <label>Repetitions:
+            <input type="number" id="input-repetitions" value="4" min="1" step="1">
+          </label>
+        </div>
+      </div>
+      
+    <div class="inline-group">
+      <label>Max same stimulus in a row:
+        <input type="number" id="input-max-same" value="2" min="1" step="1">
+      </label>
+    </div>
+      
+      <div class="card">
+        <h3>Control</h3>
+        <button id="btn-start" class="primary">Start session</button>
+        <button id="btn-stop" class="secondary" disabled>Stop</button>
+        <p id="session-status">Status: idle</p>
+      </div>
+    </section>
+    <!-- Stimulus display area -->
+    <section id="stimulus-area">
+      <!-- bouton stop flottant pour le plein écran -->
+      <button id="floating-stop-btn" class="floating-stop hidden">✕ Stop</button>
+
+      <!-- Zone d'affichage principale -->
+      <div id="stimulus-box">
+        <span id="stimulus-content"></span>
+      </div>
+
+      <!-- Overlay de compte à rebours -->
+      <div id="countdown-overlay" class="hidden">
+        <span id="countdown-text"></span>
+      </div>
+    </section>
   </main>
 
-  <!-- Overlay compte à rebours -->
-  <div id="overlay" class="overlay hidden">
-    <div id="countdown" class="countdown">4</div>
-  </div>
-
+  <!-- Important: script à la fin du body -->
   <script src="js/app.js"></script>
-
-  <!-- PWA: enregistrement du service worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("service-worker.js").catch(console.error);
-      });
-    }
-  </script>
 </body>
 </html>
