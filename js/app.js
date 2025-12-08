@@ -19,8 +19,9 @@ const settings = {
   session: {
     workDurationSec: 30,
     restDurationSec: 15,
-    repetitions: 3,
-    autoRestart: true
+    repetitions: 4,
+    autoRestart: true,
+    maxSameInRow: 3
   }
 };
 
@@ -49,7 +50,9 @@ let sessionState = {
   stimulusTimer: null,
   gapTimer: null,
   countdownTimer: null,
-  consecutiveNoGo: 0       // nombre de No-Go d'affilée (pour limiter à 2)
+  consecutiveNoGo: 0,      // nombre de No-Go d'affilée (limité à 2)
+  lastStimulusKey: null,   // pour limiter le nombre de mêmes stimuli d'affilée
+  sameStimulusCount: 0
 };
 
 // ===== Audio (beeps) =====
@@ -131,6 +134,7 @@ const workInput = document.getElementById('input-work-sec');
 const restInput = document.getElementById('input-rest-sec');
 const autoRestartCheck = document.getElementById('check-auto-restart');
 const repetitionsInput = document.getElementById('input-repetitions');
+const maxSameInput = document.getElementById('input-max-same');
 
 // ===== Navigation between screens =====
 tabButtons.forEach(btn => {
@@ -167,6 +171,7 @@ function updateSettingsFromUI() {
   settings.session.restDurationSec = parseInt(restInput.value, 10) || 0;
   settings.session.autoRestart = autoRestartCheck.checked;
   settings.session.repetitions = parseInt(repetitionsInput.value, 10) || 1;
+  settings.session.maxSameInRow = parseInt(maxSameInput.value, 10) || 3;
 
   // UI for combined options
   if (combinedOptions) {
@@ -384,8 +389,42 @@ function getRandomStimulus() {
   }
 }
 
+// Clé visuelle pour identifier "le même stimulus"
+function stimulusKey(stim) {
+  return `${stim.text}|${stim.textColor}|${stim.backgroundColor}`;
+}
+
+// Choix du prochain stimulus en respectant maxSameInRow
+function getNextStimulus() {
+  const maxSame = settings.session.maxSameInRow || 0;
+  const prevKey = sessionState.lastStimulusKey;
+  const prevCount = sessionState.sameStimulusCount;
+
+  let stim = getRandomStimulus();
+  let key = stimulusKey(stim);
+
+  if (maxSame > 0 && prevKey && prevCount >= maxSame) {
+    // on essaie de tirer autre chose, pour éviter de dépasser la limite
+    let attempts = 0;
+    while (key === prevKey && attempts < 10) {
+      stim = getRandomStimulus();
+      key = stimulusKey(stim);
+      attempts++;
+    }
+  }
+
+  if (key === prevKey) {
+    sessionState.sameStimulusCount = prevCount + 1;
+  } else {
+    sessionState.lastStimulusKey = key;
+    sessionState.sameStimulusCount = 1;
+  }
+
+  return stim;
+}
+
 function showStimulus() {
-  const stim = getRandomStimulus();
+  const stim = getNextStimulus();
   stimulusContent.textContent = stim.text;
   stimulusContent.style.color = stim.textColor;
   stimulusBox.style.backgroundColor = stim.backgroundColor;
@@ -507,6 +546,11 @@ function startWorkPhase() {
   sessionState.phase = 'work';
   const now = Date.now();
   sessionState.workEndTime = now + settings.session.workDurationSec * 1000;
+
+  // on remet la mémoire "même stimulus" à zéro pour chaque phase de travail
+  sessionState.lastStimulusKey = null;
+  sessionState.sameStimulusCount = 0;
+
   setStatus(`work (rep ${sessionState.repIndex + 1}/${settings.session.repetitions})`);
   scheduleNextStimulus();
 }
@@ -561,6 +605,8 @@ function startSession() {
   hideCountdown();
   sessionState.phase = 'work';
   sessionState.consecutiveNoGo = 0;
+  sessionState.lastStimulusKey = null;
+  sessionState.sameStimulusCount = 0;
 
   if (startBtn) startBtn.disabled = true;
   if (stopBtn) stopBtn.disabled = false;
@@ -578,6 +624,8 @@ function stopSession() {
   sessionState.phase = 'idle';
   sessionState.repIndex = 0;
   sessionState.consecutiveNoGo = 0;
+  sessionState.lastStimulusKey = null;
+  sessionState.sameStimulusCount = 0;
   setStatus('idle');
   if (startBtn) startBtn.disabled = false;
   if (stopBtn) stopBtn.disabled = true;
