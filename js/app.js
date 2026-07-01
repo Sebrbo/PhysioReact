@@ -4,7 +4,8 @@ const settings = {
     combinedMode: {
       enabled: false,
       coloredArrowsOnly: false,
-      backgroundCue: false
+      backgroundCue: false,
+      randomBackground: false
     }
   },
   display: {
@@ -122,6 +123,7 @@ const checkCombinedEnabled = document.getElementById('check-combined-enabled');
 const combinedOptions = document.getElementById('combined-options');
 const checkColoredArrowsOnly = document.getElementById('check-colored-arrows-only');
 const checkBackgroundCue = document.getElementById('check-background-cue');
+const checkRandomBackground = document.getElementById('check-random-background');
 
 // Timing controls
 const fixedDurationInput = document.getElementById('input-fixed-duration');
@@ -155,6 +157,7 @@ function updateSettingsFromUI() {
   settings.stimuli.combinedMode.enabled = checkCombinedEnabled.checked;
   settings.stimuli.combinedMode.coloredArrowsOnly = checkColoredArrowsOnly.checked;
   settings.stimuli.combinedMode.backgroundCue = checkBackgroundCue.checked;
+  settings.stimuli.combinedMode.randomBackground = checkRandomBackground.checked;
 
   // Display
   const modeEl = document.querySelector('input[name="display-mode"]:checked');
@@ -184,17 +187,19 @@ if (checkCombinedEnabled) {
       if (!checkColoredArrowsOnly.checked && !checkBackgroundCue.checked) {
         checkColoredArrowsOnly.checked = true;
         checkBackgroundCue.checked = false;
+        checkRandomBackground.checked = false;
       }
     }
     updateSettingsFromUI();
   });
 }
 
-// Les deux modes Go/No-Go sont exclusifs.
+// Les modes combinés sont exclusifs.
 if (checkColoredArrowsOnly) {
   checkColoredArrowsOnly.addEventListener('change', () => {
     if (checkColoredArrowsOnly.checked) {
       checkBackgroundCue.checked = false;
+      checkRandomBackground.checked = false;
     }
     updateSettingsFromUI();
   });
@@ -204,6 +209,17 @@ if (checkBackgroundCue) {
   checkBackgroundCue.addEventListener('change', () => {
     if (checkBackgroundCue.checked) {
       checkColoredArrowsOnly.checked = false;
+      checkRandomBackground.checked = false;
+    }
+    updateSettingsFromUI();
+  });
+}
+
+if (checkRandomBackground) {
+  checkRandomBackground.addEventListener('change', () => {
+    if (checkRandomBackground.checked) {
+      checkColoredArrowsOnly.checked = false;
+      checkBackgroundCue.checked = false;
     }
     updateSettingsFromUI();
   });
@@ -222,12 +238,14 @@ function validateSettings() {
   if (
     settings.stimuli.combinedMode.enabled &&
     !settings.stimuli.combinedMode.coloredArrowsOnly &&
-    !settings.stimuli.combinedMode.backgroundCue
+    !settings.stimuli.combinedMode.backgroundCue &&
+    !settings.stimuli.combinedMode.randomBackground
   ) {
     alert(
       'Combined mode is enabled.\n\nPlease select at least one option:\n' +
       '- "Stimulus color = Go/No-Go"\n' +
-      '- or "Background color = Go/No-Go".'
+      '- "Background color = Go/No-Go"\n' +
+      '- or "Stimulus + random background color".'
     );
     return false;
   }
@@ -235,6 +253,17 @@ function validateSettings() {
   if (settings.stimuli.combinedMode.enabled && !getCombinedStimulusPool().length) {
     alert(
       'Combined mode is enabled.\n\nPlease select at least one arrow, letter, or number.'
+    );
+    return false;
+  }
+
+  if (
+    settings.stimuli.combinedMode.enabled &&
+    settings.stimuli.combinedMode.randomBackground &&
+    !getSelectedColors().length
+  ) {
+    alert(
+      'Combined mode random background is enabled.\n\nPlease select at least one color.'
     );
     return false;
   }
@@ -323,10 +352,29 @@ function getGoNoGoCueColor() {
   }
 }
 
+function getReadableStimulusColor(backgroundColor) {
+  if (['yellow', 'orange', 'green'].includes(backgroundColor)) {
+    return '#000000';
+  }
+
+  return NEUTRAL_STIMULUS_COLOR;
+}
+
 function getRandomStimulus() {
   // ===== Combined mode =====
   if (settings.stimuli.combinedMode.enabled) {
     const stimulus = randFrom(getCombinedStimulusPool());
+
+    if (settings.stimuli.combinedMode.randomBackground) {
+      const backgroundColor = randFrom(getSelectedColors());
+
+      return {
+        text: stimulus.text,
+        textColor: getReadableStimulusColor(backgroundColor),
+        backgroundColor
+      };
+    }
+
     const cueColor = getGoNoGoCueColor();
 
     return {
