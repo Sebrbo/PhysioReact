@@ -1,9 +1,9 @@
-const CACHE_NAME = 'physioreact-v2'; // change le nom pour forcer la mise à jour
+const CACHE_NAME = 'physioreact-v3'; // change le nom pour forcer la mise à jour
 const FILES_TO_CACHE = [
   './',
   './index.html',
-  './css/style.css',
-  './js/app.js',
+  './css/style.css?v=3',
+  './js/app.js?v=3',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png'
