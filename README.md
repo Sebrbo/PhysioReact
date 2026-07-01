@@ -6,7 +6,7 @@ PhysioReact is an offline-capable web application designed for physiotherapists 
 
 # Features:
 	•	Stimuli types: colors (red, blue, green, yellow, purple, orange, black, gray), arrows (8 directions), numbers (1 to 12), letters (A to Z).
-	•	Combined mode: colored arrows only, or background color cues for Go/No-Go tasks.
+	•	Combined mode: Go/No-Go by stimulus color or by background color, using selected arrows, numbers, or letters. Green = Go, orange = No-Go.
 	•	Timing settings: fixed duration, random duration range, inter-stimulus delay.
 	•	Session settings: work duration, rest duration, repetition count, automatic restart.
 	•	Offline functionality using a service worker and web manifest.
@@ -48,7 +48,7 @@ PhysioReact est une application web fonctionnant entièrement hors-ligne, destin
 
 # Fonctionnalités :
 	•	Types de stimuli : couleurs (rouge, bleu, vert, jaune, violet, orange, noir, gris), flèches (8 directions), chiffres (1 à 12), lettres (A à Z).
-	•	Mode combiné : flèches colorées uniquement, ou fond coloré pour tâches Go / No-Go.
+	•	Mode combiné : Go / No-Go par couleur du stimulus ou par couleur du fond, avec les flèches, chiffres ou lettres sélectionnés. Vert = Go, orange = No-Go.
 	•	Réglages d’affichage : durée fixe, durée aléatoire entre deux valeurs, délai entre stimuli.
 	•	Logique de session : durée de travail, durée de repos, nombre de répétitions, redémarrage automatique.
 	•	Fonctionnement hors-ligne grâce au service worker et au manifest.
