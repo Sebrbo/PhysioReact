@@ -180,11 +180,11 @@ function updateSettingsFromUI() {
   }
 }
 
-// Quand on active combined mode, on choisit le mode couleur du stimulus par défaut.
+// Quand on active combined mode, on choisit le mode couleur du stimulus par défaut si aucun mode n'est coché.
 if (checkCombinedEnabled) {
   checkCombinedEnabled.addEventListener('change', () => {
     if (checkCombinedEnabled.checked) {
-      if (!checkColoredArrowsOnly.checked && !checkBackgroundCue.checked) {
+      if (!checkColoredArrowsOnly.checked && !checkBackgroundCue.checked && !checkRandomBackground.checked) {
         checkColoredArrowsOnly.checked = true;
         checkBackgroundCue.checked = false;
         checkRandomBackground.checked = false;
@@ -234,7 +234,7 @@ document.addEventListener('change', event => {
 
 // ===== Validation of settings before running =====
 function validateSettings() {
-  // Mode combiné : au moins un des deux sous-modes doit être choisi
+  // Mode combiné : au moins un des trois sous-modes doit être choisi
   if (
     settings.stimuli.combinedMode.enabled &&
     !settings.stimuli.combinedMode.coloredArrowsOnly &&
