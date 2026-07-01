@@ -146,19 +146,66 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .combined-options.hidden {
   display: none;
 }
 
-.combined-mode-option label {
-  margin-bottom: 0.1rem;
+.combined-mode-label {
+  margin: 0 0 0.15rem;
+  color: #cfcfcf;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.combined-mode-option {
+  min-width: 0;
+}
+
+.combined-mode-card {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #3b3b3b;
+  border-radius: 0.55rem;
+  background: #181818;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.combined-mode-option:has(input:checked) .combined-mode-card {
+  border-color: #0a84ff;
+  background: #17202b;
+  box-shadow: inset 0 0 0 1px #0a84ff;
+}
+
+.combined-mode-card:focus-within {
+  border-color: #79b8ff;
+  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.35);
+}
+
+.combined-mode-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.combined-mode-title-row input {
+  flex: 0 0 auto;
+  margin-top: 0.16rem;
+}
+
+.combined-mode-title {
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .combined-mode-description {
-  margin: 0 0 0 1.45rem;
+  display: block;
+  margin: 0.18rem 0 0 1.55rem;
   color: #b8b8b8;
   font-size: 0.82rem;
   line-height: 1.3;
