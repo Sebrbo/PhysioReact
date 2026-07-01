@@ -41,6 +41,7 @@ These ids are used by `js/app.js` and must be treated as part of the app contrac
 - `combined-options`
 - `check-colored-arrows-only`
 - `check-background-cue`
+- `check-random-background`
 - `input-fixed-duration`
 - `input-random-min`
 - `input-random-max`
