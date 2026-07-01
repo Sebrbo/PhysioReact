@@ -4,9 +4,7 @@ const settings = {
     combinedMode: {
       enabled: false,
       coloredArrowsOnly: false,
-      backgroundCue: false,
-      goColor: '#00aa00',
-      noGoColor: '#ff8800'
+      backgroundCue: false
     }
   },
   display: {
@@ -40,6 +38,10 @@ const ARROW_LIST = [
 
 const NUMBER_LIST = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const LETTER_LIST = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+const GO_COLOR = '#00aa00';
+const NO_GO_COLOR = '#ff8800';
+const NEUTRAL_STIMULUS_COLOR = '#ffffff';
+const NEUTRAL_BACKGROUND_COLOR = '#000000';
 
 // ===== Session state =====
 let sessionState = {
@@ -120,8 +122,6 @@ const checkCombinedEnabled = document.getElementById('check-combined-enabled');
 const combinedOptions = document.getElementById('combined-options');
 const checkColoredArrowsOnly = document.getElementById('check-colored-arrows-only');
 const checkBackgroundCue = document.getElementById('check-background-cue');
-const inputGoColor = document.getElementById('input-go-color');
-const inputNoGoColor = document.getElementById('input-nogo-color');
 
 // Timing controls
 const fixedDurationInput = document.getElementById('input-fixed-duration');
@@ -155,8 +155,6 @@ function updateSettingsFromUI() {
   settings.stimuli.combinedMode.enabled = checkCombinedEnabled.checked;
   settings.stimuli.combinedMode.coloredArrowsOnly = checkColoredArrowsOnly.checked;
   settings.stimuli.combinedMode.backgroundCue = checkBackgroundCue.checked;
-  settings.stimuli.combinedMode.goColor = inputGoColor.value;
-  settings.stimuli.combinedMode.noGoColor = inputNoGoColor.value;
 
   // Display
   const modeEl = document.querySelector('input[name="display-mode"]:checked');
@@ -179,7 +177,7 @@ function updateSettingsFromUI() {
   }
 }
 
-// Quand on active combined mode → random colors activé par défaut si rien d'autre
+// Quand on active combined mode, on choisit le mode couleur du stimulus par défaut.
 if (checkCombinedEnabled) {
   checkCombinedEnabled.addEventListener('change', () => {
     if (checkCombinedEnabled.checked) {
@@ -192,7 +190,7 @@ if (checkCombinedEnabled) {
   });
 }
 
-// Random colors et Go/No-Go sont exclusifs
+// Les deux modes Go/No-Go sont exclusifs.
 if (checkColoredArrowsOnly) {
   checkColoredArrowsOnly.addEventListener('change', () => {
     if (checkColoredArrowsOnly.checked) {
@@ -228,8 +226,15 @@ function validateSettings() {
   ) {
     alert(
       'Combined mode is enabled.\n\nPlease select at least one option:\n' +
-      '- "Use only arrows with random colors"\n' +
-      '- or "Use background color as Go / No-Go cue".'
+      '- "Stimulus color = Go/No-Go"\n' +
+      '- or "Background color = Go/No-Go".'
+    );
+    return false;
+  }
+
+  if (settings.stimuli.combinedMode.enabled && !getCombinedStimulusPool().length) {
+    alert(
+      'Combined mode is enabled.\n\nPlease select at least one arrow, letter, or number.'
     );
     return false;
   }
@@ -262,16 +267,27 @@ function getSelectedLetters() {
     .map(cb => cb.dataset.letter);
 }
 
-// Pour le mode combiné : fallback si rien n'est coché
 function getArrowsForCombined() {
   const ids = getSelectedArrowIds();
-  if (!ids.length) return ARROW_LIST.slice();
   return ARROW_LIST.filter(a => ids.includes(a.id));
 }
 
-function getColorsForCombined() {
-  const colors = getSelectedColors();
-  return colors.length ? colors : COLOR_LIST.slice();
+function getCombinedStimulusPool() {
+  const pool = [];
+
+  getArrowsForCombined().forEach(arrow => {
+    pool.push({ text: arrow.char });
+  });
+
+  getSelectedNumbers().forEach(number => {
+    pool.push({ text: number });
+  });
+
+  getSelectedLetters().forEach(letter => {
+    pool.push({ text: letter });
+  });
+
+  return pool;
 }
 
 // ===== Stimulus generation =====
@@ -288,9 +304,7 @@ function getDisplayDuration() {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-function getGoNoGoBackground() {
-  if (!settings.stimuli.combinedMode.backgroundCue) return null;
-
+function getGoNoGoCueColor() {
   let isGo;
 
   // Si déjà 2 No-Go d'affilée → on force un Go
@@ -302,30 +316,23 @@ function getGoNoGoBackground() {
 
   if (isGo) {
     sessionState.consecutiveNoGo = 0;
-    return settings.stimuli.combinedMode.goColor;
+    return GO_COLOR;
   } else {
     sessionState.consecutiveNoGo += 1;
-    return settings.stimuli.combinedMode.noGoColor;
+    return NO_GO_COLOR;
   }
 }
 
 function getRandomStimulus() {
   // ===== Combined mode =====
   if (settings.stimuli.combinedMode.enabled) {
-    const arrows = getArrowsForCombined();
-    const colors = getColorsForCombined();
-    const arrow = randFrom(arrows);
-
-    const color = settings.stimuli.combinedMode.coloredArrowsOnly
-      ? randFrom(colors)
-      : '#ffffff';
-
-    const bg = getGoNoGoBackground();
+    const stimulus = randFrom(getCombinedStimulusPool());
+    const cueColor = getGoNoGoCueColor();
 
     return {
-      text: arrow.char,
-      textColor: settings.stimuli.combinedMode.coloredArrowsOnly ? color : '#ffffff',
-      backgroundColor: bg || '#000000'
+      text: stimulus.text,
+      textColor: settings.stimuli.combinedMode.coloredArrowsOnly ? cueColor : NEUTRAL_STIMULUS_COLOR,
+      backgroundColor: settings.stimuli.combinedMode.backgroundCue ? cueColor : NEUTRAL_BACKGROUND_COLOR
     };
   }
 
@@ -344,8 +351,8 @@ function getRandomStimulus() {
   if (!pool.length) {
     return {
       text: '?',
-      textColor: '#ffffff',
-      backgroundColor: '#000000'
+      textColor: NEUTRAL_STIMULUS_COLOR,
+      backgroundColor: NEUTRAL_BACKGROUND_COLOR
     };
   }
 
@@ -355,7 +362,7 @@ function getRandomStimulus() {
     const color = randFrom(colors);
     return {
       text: '',
-      textColor: '#ffffff',
+      textColor: NEUTRAL_STIMULUS_COLOR,
       backgroundColor: color
     };
   }
@@ -365,8 +372,8 @@ function getRandomStimulus() {
     const arrow = randFrom(arrows);
     return {
       text: arrow.char,
-      textColor: '#ffffff',
-      backgroundColor: '#000000'
+      textColor: NEUTRAL_STIMULUS_COLOR,
+      backgroundColor: NEUTRAL_BACKGROUND_COLOR
     };
   }
 
@@ -374,8 +381,8 @@ function getRandomStimulus() {
     const n = randFrom(numbers);
     return {
       text: n,
-      textColor: '#ffffff',
-      backgroundColor: '#000000'
+      textColor: NEUTRAL_STIMULUS_COLOR,
+      backgroundColor: NEUTRAL_BACKGROUND_COLOR
     };
   }
 
@@ -383,8 +390,8 @@ function getRandomStimulus() {
     const l = randFrom(letters);
     return {
       text: l,
-      textColor: '#ffffff',
-      backgroundColor: '#000000'
+      textColor: NEUTRAL_STIMULUS_COLOR,
+      backgroundColor: NEUTRAL_BACKGROUND_COLOR
     };
   }
 }
@@ -432,7 +439,7 @@ function showStimulus() {
 
 function clearStimulus() {
   stimulusContent.textContent = '';
-  stimulusBox.style.backgroundColor = '#000000';
+  stimulusBox.style.backgroundColor = NEUTRAL_BACKGROUND_COLOR;
 }
 
 // ===== Fullscreen view helpers =====
