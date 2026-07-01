@@ -23,7 +23,7 @@ PhysioReact can display several stimulus families:
 - Arrows: selected arrow directions appear as neutral visual stimuli.
 - Numbers: selected numbers from 1 to 12 appear as neutral visual stimuli.
 - Letters: selected letters from A to Z appear as neutral visual stimuli.
-- Combined mode: selected arrows, numbers, and letters are used with Go/No-Go cues.
+- Combined mode: selected arrows, numbers, and letters are used with Go/No-Go cues or with random selected background colors.
 
 ## Combined Mode / Go-No-Go
 
@@ -38,6 +38,18 @@ The Go/No-Go color code is fixed:
 - Orange `#ff8800` = No-Go.
 
 Go/No-Go colors are not random in Combined mode. The displayed content can still be randomized from the selected arrows, numbers, and letters, but the Go/No-Go cue itself is limited to green and orange.
+
+## Combined Mode / Random Background
+
+Combined mode also includes `Stimulus + random background color`. This mode is not Go/No-Go.
+
+In this mode:
+
+- The app randomly selects an arrow, number, or letter from the selected stimuli.
+- The app randomly selects a background color from the selected colors.
+- The background color can be any selected color, such as blue, green, red, yellow, purple, orange, black, or gray.
+- The background colors are not limited to green and orange.
+- The stimulus remains neutral or contrasted for readability.
 
 ## Timing And Session Settings
 
@@ -95,7 +107,7 @@ PhysioReact est une aide a l'exercice et a la reeducation. L'application ne remp
 - Fleches : les directions selectionnees apparaissent comme stimuli neutres.
 - Chiffres : les chiffres selectionnes de 1 a 12 apparaissent comme stimuli neutres.
 - Lettres : les lettres selectionnees de A a Z apparaissent comme stimuli neutres.
-- Combined mode : les fleches, chiffres et lettres selectionnes sont utilises avec des indices Go/No-Go.
+- Combined mode : les fleches, chiffres et lettres selectionnes sont utilises avec des indices Go/No-Go ou avec des fonds colores aleatoires selectionnes.
 
 ### Combined Mode / Go-No-Go
 
@@ -110,6 +122,18 @@ Le code couleur est fixe :
 - Orange `#ff8800` = No-Go.
 
 La couleur Go/No-Go n'est pas aleatoire en Combined mode. Le contenu affiche peut rester aleatoire selon les fleches, chiffres et lettres selectionnes, mais l'indice Go/No-Go est limite au vert et a l'orange.
+
+### Combined Mode / Fond Aleatoire
+
+Le Combined mode inclut aussi `Stimulus + random background color`. Ce mode n'est pas un Go/No-Go.
+
+Dans ce mode :
+
+- L'application tire aleatoirement une fleche, un chiffre ou une lettre parmi les stimuli selectionnes.
+- L'application tire aleatoirement une couleur de fond parmi les couleurs selectionnees.
+- La couleur de fond peut etre n'importe quelle couleur selectionnee : bleu, vert, rouge, jaune, violet, orange, noir ou gris.
+- Les couleurs de fond ne sont pas limitees au vert et a l'orange.
+- Le stimulus reste neutre ou contraste pour rester lisible.
 
 ### Reglages Timing Et Session
 
