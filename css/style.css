@@ -142,8 +142,26 @@ button:disabled {
   font-weight: 700;
 }
 
+.combined-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
+
 .combined-options.hidden {
   display: none;
+}
+
+.combined-mode-option label {
+  margin-bottom: 0.1rem;
+}
+
+.combined-mode-description {
+  margin: 0 0 0 1.45rem;
+  color: #b8b8b8;
+  font-size: 0.82rem;
+  line-height: 1.3;
 }
 
 /* Bouton stop flottant pour le mode plein écran */
