@@ -114,28 +114,39 @@
         </label>
 
         <div id="combined-options" class="combined-options hidden">
+          <p class="combined-mode-label">Choose combined logic</p>
+
           <div class="combined-mode-option">
-            <label>
-              <input type="checkbox" id="check-colored-arrows-only">
-              Stimulus color = Go/No-Go
+            <label class="combined-mode-card">
+              <span class="combined-mode-title-row">
+                <input type="checkbox" id="check-colored-arrows-only">
+                <span class="combined-mode-title">Stimulus color = Go/No-Go</span>
+              </span>
+              <span class="combined-mode-description">Stimulus turns green for Go or orange for No-Go.</span>
+              <span class="combined-mode-description">Background stays neutral.</span>
             </label>
-            <p class="combined-mode-description">The stimulus turns green for Go or orange for No-Go.</p>
           </div>
 
           <div class="combined-mode-option">
-            <label>
-              <input type="checkbox" id="check-background-cue">
-              Background color = Go/No-Go
+            <label class="combined-mode-card">
+              <span class="combined-mode-title-row">
+                <input type="checkbox" id="check-background-cue">
+                <span class="combined-mode-title">Background color = Go/No-Go</span>
+              </span>
+              <span class="combined-mode-description">Background turns green for Go or orange for No-Go.</span>
+              <span class="combined-mode-description">Stimulus stays neutral and readable.</span>
             </label>
-            <p class="combined-mode-description">The background turns green for Go or orange for No-Go.</p>
           </div>
 
           <div class="combined-mode-option">
-            <label>
-              <input type="checkbox" id="check-random-background">
-              Stimulus + random background color
+            <label class="combined-mode-card">
+              <span class="combined-mode-title-row">
+                <input type="checkbox" id="check-random-background">
+                <span class="combined-mode-title">Stimulus + random background color</span>
+              </span>
+              <span class="combined-mode-description">Background uses your selected colors.</span>
+              <span class="combined-mode-description">No Go/No-Go rule.</span>
             </label>
-            <p class="combined-mode-description">The background uses your selected colors. No Go/No-Go rule.</p>
           </div>
         </div>
       </div>
