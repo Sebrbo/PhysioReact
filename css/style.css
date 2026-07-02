@@ -348,12 +348,17 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
+  background-color: #061120;
+  background-image:
     radial-gradient(circle at 50% 50%, rgba(255, 176, 0, 0.14), transparent 5rem),
     radial-gradient(circle at 50% 50%, rgba(40, 215, 255, 0.14), transparent 14rem),
-    linear-gradient(160deg, #061120, #0b1f3a 60%, #071426);
+    linear-gradient(160deg, transparent, rgba(11, 31, 58, 0.82) 60%, transparent);
   box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   transition: background-color 0.2s ease;
+}
+
+#stimulus-box[style*="background-color"] {
+  background-image: none;
 }
 
 #stimulus-box::before,
@@ -369,6 +374,11 @@ button:disabled {
 #stimulus-box::after {
   inset: 30%;
   border-color: rgba(255, 176, 0, 0.16);
+}
+
+#stimulus-box[style*="background-color"]::before,
+#stimulus-box[style*="background-color"]::after {
+  opacity: 0;
 }
 
 #stimulus-content {
