@@ -13,7 +13,7 @@
 <body>
   <header class="top-bar">
     <h1>PhysioReact</h1>
-    <nav class="nav-tabs">
+    <nav class="nav-tabs" aria-label="Settings sections">
       <button data-screen="stimuli" class="tab-button active">Stimuli</button>
       <button data-screen="timing" class="tab-button">Display timing</button>
       <button data-screen="session" class="tab-button">Session</button>
@@ -26,8 +26,8 @@
       <h2>Stimuli selection</h2>
 
       <div class="card">
-        <h3>Colors</h3>
-        <div class="inline-group">
+        <h3 id="colors-heading">Colors</h3>
+        <div class="inline-group" role="group" aria-labelledby="colors-heading">
           <label><input type="checkbox" class="color-checkbox" data-color="red" checked> Red</label>
           <label><input type="checkbox" class="color-checkbox" data-color="blue" checked> Blue</label>
           <label><input type="checkbox" class="color-checkbox" data-color="green" checked> Green</label>
@@ -40,8 +40,8 @@
       </div>
 
       <div class="card">
-        <h3>Arrows</h3>
-        <div class="inline-group">
+        <h3 id="arrows-heading">Arrows</h3>
+        <div class="inline-group" role="group" aria-labelledby="arrows-heading">
           <label><input type="checkbox" class="arrow-checkbox" data-arrow="up" checked> ↑</label>
           <label><input type="checkbox" class="arrow-checkbox" data-arrow="down" checked> ↓</label>
           <label><input type="checkbox" class="arrow-checkbox" data-arrow="left"> ←</label>
@@ -54,8 +54,8 @@
       </div>
 
       <div class="card">
-        <h3>Numbers (1–12)</h3>
-        <div class="inline-group">
+        <h3 id="numbers-heading">Numbers (1–12)</h3>
+        <div class="inline-group" role="group" aria-labelledby="numbers-heading">
           <!-- 1 à 12 -->
           <label><input type="checkbox" class="number-checkbox" data-number="1"> 1</label>
           <label><input type="checkbox" class="number-checkbox" data-number="2"> 2</label>
@@ -73,8 +73,8 @@
       </div>
 
       <div class="card">
-        <h3>Letters (A–Z)</h3>
-        <div class="inline-group">
+        <h3 id="letters-heading">Letters (A–Z)</h3>
+        <div class="inline-group" role="group" aria-labelledby="letters-heading">
           <!-- A à Z -->
           <!-- Tu peux en décocher plein par défaut si c'est trop chargé -->
           <label><input type="checkbox" class="letter-checkbox" data-letter="A"> A</label>
@@ -113,8 +113,8 @@
           Enable combined mode (uses your selected arrows, letters, or numbers)
         </label>
 
-        <div id="combined-options" class="combined-options hidden">
-          <p class="combined-mode-label">Choose combined logic</p>
+        <div id="combined-options" class="combined-options hidden" role="group" aria-labelledby="combined-logic-label">
+          <p id="combined-logic-label" class="combined-mode-label">Choose combined logic</p>
 
           <div class="combined-mode-option">
             <label class="combined-mode-card">
@@ -224,15 +224,15 @@
       
       <div class="card">
         <h3>Control</h3>
-        <button id="btn-start" class="primary">Start session</button>
-        <button id="btn-stop" class="secondary" disabled>Stop</button>
-        <p id="session-status">Status: idle</p>
+        <button id="btn-start" class="primary" aria-label="Start session">Start session</button>
+        <button id="btn-stop" class="secondary" aria-label="Stop session" disabled>Stop</button>
+        <p id="session-status" aria-live="polite" aria-atomic="true">Status: idle</p>
       </div>
     </section>
     <!-- Stimulus display area -->
     <section id="stimulus-area">
       <!-- bouton stop flottant pour le plein écran -->
-      <button id="floating-stop-btn" class="floating-stop hidden">✕ Stop</button>
+      <button id="floating-stop-btn" class="floating-stop hidden" aria-label="Stop session">✕ Stop</button>
 
       <!-- Zone d'affichage principale -->
       <div id="stimulus-box">
@@ -241,7 +241,7 @@
 
       <!-- Overlay de compte à rebours -->
       <div id="countdown-overlay" class="hidden">
-        <span id="countdown-text"></span>
+        <span id="countdown-text" role="status" aria-live="polite" aria-atomic="true"></span>
       </div>
     </section>
   </main>
