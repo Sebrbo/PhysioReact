@@ -42,6 +42,13 @@ body {
   background: #0a84ff;
 }
 
+button:focus-visible,
+input:focus-visible,
+.tab-button:focus-visible {
+  outline: 3px solid #79b8ff;
+  outline-offset: 3px;
+}
+
 main {
   padding: 1rem;
   display: flex;
