@@ -82,11 +82,11 @@ http://localhost:8000
 
 ## PWA / Offline Use
 
-PhysioReact includes a web manifest and service worker for offline-capable use. The current service worker cache is `physioreact-v5`.
+PhysioReact includes a web manifest and service worker for offline-capable use. The current service worker cache is `physioreact-v7`.
 
 The main app assets are versioned in `index.html` and in the service worker precache list:
 
-- `css/style.css?v=5`
+- `css/style.css?v=7`
 - `js/app.js?v=3`
 
 When changing app shell files such as `index.html`, `css/style.css`, `js/app.js`, `manifest.webmanifest`, or `service-worker.js`, check whether the service worker `CACHE_NAME` must be incremented so users receive the latest version. Keep versioned asset paths aligned between `index.html` and `service-worker.js`.
@@ -162,7 +162,7 @@ http://localhost:8000
 
 ### PWA / Cache Hors Ligne
 
-Le cache service worker courant est `physioreact-v5`. Les chemins versionnes principaux sont `css/style.css?v=5` et `js/app.js?v=3`, et ils doivent rester identiques dans `index.html` et `service-worker.js`.
+Le cache service worker courant est `physioreact-v7`. Les chemins versionnes principaux sont `css/style.css?v=7` et `js/app.js?v=3`, et ils doivent rester identiques dans `index.html` et `service-worker.js`.
 
 Quand `index.html`, `css/style.css`, `js/app.js`, `manifest.webmanifest` ou `service-worker.js` change, verifier si `CACHE_NAME` doit etre incremente pour forcer la recuperation de la nouvelle version par les utilisateurs.
 
